@@ -1,8 +1,9 @@
-'use client'
+'use client'  
 import InfiniteScroll from "@/components/InfiniteScroll";
 import Navbar from "@/components/Navbar"
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
+
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -31,8 +32,7 @@ export default function Home() {
     setLoading(true)
 
     try {
-      const res = await fetch("http://13.235.99.198/chat", {
-      // const res = await fetch("http://localhost:8000/chat", {
+      const res = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
