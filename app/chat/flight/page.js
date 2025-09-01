@@ -1,4 +1,5 @@
-'use client'  
+'use client'
+import ReactMarkdown from "react-markdown";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import Navbar from "@/components/Navbar"
 import Image from "next/image";
@@ -80,7 +81,7 @@ export default function Home() {
                     : "bg-white text-black rounded-bl-none md: w-[70%]"
                     }`}
                 >
-                  {msg.content}
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
                 </div>
               </div>
             ))}
