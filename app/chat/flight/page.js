@@ -43,11 +43,11 @@ export default function Home() {
       });
 
       const data = await res.json();
-      setMessages([...newMessages, { role: "system", content: data.answer }]);
+      setMessages([...newMessages, { role: "ai", content: data.answer }]);
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { role: "system", content: "⚠️ Error connecting to server." },
+        { role: "ai", content: "⚠️ Error connecting to server." },
       ]);
     } finally {
       setLoading(false)
