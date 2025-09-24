@@ -29,6 +29,16 @@ main{
   scrollbar-width: thin;
 }
 
+/* Hide scrollbar utility class */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
 @keyframes infinite-scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }

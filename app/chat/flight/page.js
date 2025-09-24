@@ -30,14 +30,23 @@ export default function Home() {
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput("");
-    setLoading(true)
+    setLoading(true);
+    
+    // Reset textarea height after sending message
+    setTimeout(() => {
+      const textarea = document.querySelector('textarea');
+      if (textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = '48px'; // Reset to minimum height
+        textarea.style.overflowY = 'hidden'; // Reset overflow state
+      }
+    }, 0);
 
     try {
       const res = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // query: input,
           chat_history: newMessages,
         }),
       });
@@ -55,10 +64,21 @@ export default function Home() {
   }
 
 
-  function handleKeyDown(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+  function handleTextareaChange(e) {
+    setInput(e.target.value);
+    
+    // Auto-resize textarea with maximum height limit of 300px
+    const maxHeight = 200;
+    e.target.style.height = 'auto';
+    
+    if (e.target.scrollHeight <= maxHeight) {
+      // If content fits within max height, resize normally
+      e.target.style.height = e.target.scrollHeight + 'px';
+      e.target.style.overflowY = 'hidden';
+    } else {
+      // If content exceeds max height, set to max height and enable scrolling
+      e.target.style.height = maxHeight + 'px';
+      e.target.style.overflowY = 'auto';
     }
   }
 
@@ -94,15 +114,21 @@ export default function Home() {
                 </div>
               </div>
             )}
+            
+            {/* Invisible element to scroll to */}
+            <div ref={messagesEndRef} />
           </div>
         </div>
       </div>
-      <div className="flex gap-2 py-3">
-        <input className="bg-white p-3 rounded-full w-full placeholder:text-black/70 placeholder:font-bold focus: outline-none" placeholder="Ask me anything!" type="text"
+      <div className="flex gap-2 py-3 items-end">
+        <textarea 
+          className="bg-white p-3 rounded-3xl w-full placeholder:text-black/70 placeholder:font-bold focus:outline-none resize-none min-h-[48px] scrollbar-hide" 
+          placeholder="Ask me anything!" 
+          rows="1"
           value={input}
-          onKeyDown={handleKeyDown}
-          onChange={(e) => setInput(e.target.value)} />
-        <button className="bg-[#4C8829] rounded-full p-3" onClick={sendMessage}>
+          onChange={handleTextareaChange}
+        />
+        <button className="bg-[#4C8829] rounded-full p-3 flex-shrink-0" onClick={sendMessage}>
           <Image src='/icons/submit.svg' width={30} height={30} alt="submit" />
         </button>
       </div>
