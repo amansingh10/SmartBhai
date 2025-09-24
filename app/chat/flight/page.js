@@ -9,7 +9,7 @@ import { useState, useRef, useEffect } from "react";
 export default function Home() {
   const [messages, setMessages] = useState([
     {
-      role: "system",
+      role: "ai",
       content:
         "👋 Hi! I’m your Flight Coupon Assistant. I can help you find the best flight offers, discounts, and deals. Ask me anything about flight coupons!",
     },
@@ -37,7 +37,7 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: input,
+          // query: input,
           chat_history: newMessages,
         }),
       });
