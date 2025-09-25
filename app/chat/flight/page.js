@@ -83,7 +83,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col h-[calc(100vh-64px)] mx-1.5">
+    <main className="flex flex-col h-[calc(100dvh-64px)] mx-1.5">
       <div className="flex-grow overflow-y-auto">
         <Navbar />
         <InfiniteScroll/>
