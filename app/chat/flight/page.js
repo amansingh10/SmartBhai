@@ -2,6 +2,7 @@
 import ReactMarkdown from "react-markdown";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import Navbar from "@/components/Navbar"
+import FlightCard from "@/components/FlightCard";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 
@@ -17,11 +18,13 @@ export default function Home() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [currentFlightData, setCurrentFlightData] = useState(null);
+  const [currentBookingOptions, setCurrentBookingOptions] = useState(null);
 
-  // Auto-scroll to bottom when new message arrives
+  // Auto-scroll to bottom when new message arrives or flight data changes
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, currentFlightData]);
 
   async function sendMessage() {
     if (!input.trim()) return;
@@ -52,7 +55,23 @@ export default function Home() {
       });
 
       const data = await res.json();
-      setMessages([...newMessages, { role: "ai", content: data.answer }]);
+      console.log('Backend response:', data);
+      
+      // Update flight data separately from messages
+      if (data.flight_data && data.flight_data.length > 0) {
+        console.log('Flight data structure:', data.flight_data[0]);
+        setCurrentFlightData(data.flight_data);
+        setCurrentBookingOptions(data.booking_options);
+      } else {
+        setCurrentFlightData(null);
+        setCurrentBookingOptions(null);
+      }
+      
+      // Only store the text content in chat history
+      setMessages([...newMessages, { 
+        role: "ai", 
+        content: data.content
+      }]);
     } catch (error) {
       setMessages((prev) => [
         ...prev,
@@ -91,18 +110,20 @@ export default function Home() {
           {/* Messages */}
           <div className="flex-1 space-y-4 mb-4">
             {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.role === "human" ? "justify-end" : "justify-start"}`}
-              >
+              <div key={idx}>
                 <div
-                  className={`px-4 py-2 rounded-2xl shadow-md max-w-full break-words ${msg.role === "human"
-                    ? "bg-[#44403C] text-white rounded-br-none"
-                    : "bg-white text-black rounded-bl-none md: w-[70%]"
-                    }`}
+                  className={`flex ${msg.role === "human" ? "justify-end" : "justify-start"}`}
                 >
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  <div
+                    className={`px-4 py-2 rounded-2xl shadow-md max-w-full break-words ${msg.role === "human"
+                      ? "bg-[#44403C] text-white rounded-br-none"
+                      : "bg-white text-black rounded-bl-none md: w-[70%]"
+                      }`}
+                  >
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
                 </div>
+                
               </div>
             ))}
 
@@ -118,6 +139,19 @@ export default function Home() {
             {/* Invisible element to scroll to */}
             <div ref={messagesEndRef} />
           </div>
+          
+          {/* Render FlightCards separately if flight data exists */}
+          {currentFlightData && currentFlightData.length > 0 && (
+            <div className="mt-4 space-y-4">
+              {currentFlightData.map((flightGroup, index) => (
+                <FlightCard 
+                  key={index}
+                  flightData={flightGroup.flight_data} 
+                  bookingOptions={flightGroup.booking_options}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div className="flex gap-2 py-3 items-end">
