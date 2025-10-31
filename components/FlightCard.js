@@ -813,7 +813,7 @@ if (
   ) : (
     <div
       className={`p-2 rounded-md ${
-        msg.from === 'user'
+        git
           ? 'bg-blue-200 text-right'
           : 'bg-yellow-100 text-gray-800'
       }`}
