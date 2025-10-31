@@ -900,7 +900,7 @@ export default function Home() {
   async function sendMessageAutomatically(newMessages) {
     setLoading(true);
     try {
-      const res = await fetch(`https://smartbhaibackend.onrender.com/chat`, {
+      const res = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chat_history: newMessages }),
